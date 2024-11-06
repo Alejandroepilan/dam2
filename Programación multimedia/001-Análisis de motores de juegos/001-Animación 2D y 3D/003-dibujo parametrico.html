@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animación</title>
+  <style>
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas></canvas>
+  <script>
+    var x = 20
+    var y = 20
+    var lienzo = document.querySelector("canvas")
+    var contexto = lienzo.getContext("2d")
+    lienzo.width = 512
+    lienzo.height = 512
+    var temporizador = setTimeout("bucle()", 1000)
+    function bucle() {
+      x += 10
+      contexto.fillRect(x, y, 30, 30)
+      clearTimeout(temporizador)
+      temporizador = setTimeout("bucle()", 1000)
+    }
+  </script>
+</body>
+
+</html>
