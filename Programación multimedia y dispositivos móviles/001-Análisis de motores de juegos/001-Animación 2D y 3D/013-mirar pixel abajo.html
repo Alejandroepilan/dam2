@@ -54,7 +54,7 @@
 
     // Aqui instancio los npc en un array de 50 elementos
     var misnpcs = []
-    var numeronpc = 50
+    var numeronpc = 20
     for (let i = 0; i < numeronpc; i++) {
       misnpcs[i] = new Npc()
     }
@@ -72,9 +72,18 @@
     lienzo2.height = 512
     contexto2.fillStyle = "green"
 
+    // Controles para mover jugador
+    document.onkeydown = function (e) {
+      if (e.key == "ArrowUp") { jugador.y -= 5 }
+      if (e.key == "ArrowDown") { jugador.y += 5 }
+      if (e.key == "ArrowLeft") { jugador.x -= 5 }
+      if (e.key == "ArrowRight") { jugador.x += 5 }
+    }
+
     var temporizador = setTimeout("bucle()", 1000)
     function bucle() {
       contexto.clearRect(0, 0, 512, 512)
+      contexto2.clearRect(0, 0, 512, 512)
 
       for (let i = 0; i < numeronpc; i++) {
         misnpcs[i].mueve()
@@ -83,6 +92,12 @@
       }
 
       jugador.dibuja()
+      // Con esta linea obtengo un array con los colores de un pixel
+      var datos = contexto.getImageData(jugador.x, jugador.y, 1, 1).data
+      var alpha = datos[3] // El indice 3 es la transparencia
+      if (alpha == 255) {
+        window.location = window.location // Recargar pagina
+      }
       clearTimeout(temporizador)
       temporizador = setTimeout("bucle()", 10)
     }
