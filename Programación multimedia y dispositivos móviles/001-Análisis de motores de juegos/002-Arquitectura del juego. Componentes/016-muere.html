@@ -43,6 +43,11 @@
         jugador.vy += gravedad
         jugador.y += jugador.vy
       }
+      muere() {
+        if (this.y > 512) {
+          window.location = window.location
+        }
+      }
     }
     class Npc {
       // Funcion que se ejecuta cuando se instancia el objeto
@@ -109,8 +114,11 @@
         misnpcs[i].dibuja()
       }
 
+      // Pongo aqui todos los metodos, mas ordenado
+
       jugador.mueve()
       jugador.dibuja()
+      jugador.muere()
       // Con esta linea obtengo un array con los colores de un pixel
       var datos = contexto.getImageData(jugador.x, jugador.y, 1, 1).data
       var alpha = datos[3] // El indice 3 es la transparencia

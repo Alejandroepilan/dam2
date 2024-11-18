@@ -16,32 +16,72 @@
 </head>
 
 <body>
+  <canvas id="lienzoFondo"></canvas>
+  <canvas id="lienzoNivel"></canvas>
   <canvas id="lienzo1"></canvas>
   <canvas id="lienzo2"></canvas>
   <script>
     // variables globales
-    gravedad = 1;
+    var gravedad = 1
+    var salto = -8
 
-
+    //////////////////////////////////// IMAGENES ////////////////////////////////////
     // Cargo las imagenes del jugador y del malo
     var imagenJugador = new Image()
-    imagenJugador.src = "./img/jugador.png"
+    imagenJugador.src = "./img/spriteJugador.png"
+
     var imagenMalo = new Image()
     imagenMalo.src = "./img/malo.png"
+
+    var imagenNivel = new Image()
+    imagenNivel.src = "./img/plataformas.png"
+    imagenNivel.onload = function () {
+      contextoNivel.drawImage(imagenNivel, 0, 0)
+    }
+
+    var imagenFondo = new Image()
+    imagenFondo.src = "./img/fondo.png"
+    imagenFondo.onload = function () {
+      contextoFondo.drawImage(imagenFondo, 0, 0)
+    }
+
+    //////////////////////////////////// CLASES ////////////////////////////////////
 
     class Jugador {
       constructor() {
         this.x = 256
         this.y = 256
         this.vy = 0
+        this.cayendo = true
+        this.direccion = "izquierda"
       }
       dibuja() {
-        //contexto2.fillRect(this.x, this.y, 20, 20)
-        contexto2.drawImage(imagenJugador, this.x, this.y, 31, 48) // Los dos numero del final es el tamaño de la imagen reducido 10 veces de su tamaño original
+        if (this.direccion == "derecha") {
+          contexto2.drawImage(imagenJugador, 0, 0, 31, 47, this.x, this.y, 31, 47)
+        } else {
+          contexto2.drawImage(imagenJugador, 31, 0, 31, 47, this.x, this.y, 31, 47)
+        }
       }
       mueve() {
-        jugador.vy += gravedad
-        jugador.y += jugador.vy
+        if (this.cayendo == true) {
+          jugador.vy += gravedad
+          jugador.y += jugador.vy
+        }
+        this.muere()
+        this.colisionNivel()
+      }
+      muere() {
+        if (this.y > 512) {
+          window.location = window.location
+        }
+      }
+      colisionNivel() {
+        let pixel = contextoNivel.getImageData(this.x, this.y + 31, 1, 1)
+        if (pixel.data[3] > 0) {
+          this.cayendo = false
+        } else {
+          this.cayendo = true
+        }
       }
     }
     class Npc {
@@ -63,7 +103,6 @@
         this.y += Math.sin(this.angulo)
       } // Este dibuja el npc
       dibuja() {
-        //contexto.fillRect(this.x, this.y, 30, 30)
         contexto.drawImage(imagenMalo, this.x, this.y, 43, 51) // Los dos numero del final es el tamaño de la imagen reducido 10 veces de su tamaño original
       }
     }
@@ -72,12 +111,12 @@
 
     // Aqui instancio los npc en un array de 50 elementos
     var misnpcs = []
-    var numeronpc = 20
+    var numeronpc = 2
     for (let i = 0; i < numeronpc; i++) {
       misnpcs[i] = new Npc()
     }
-    var x = 20
-    var y = 20
+
+    //////////////////////////////////// LIENZOS ////////////////////////////////////
 
     var lienzo = document.querySelector("#lienzo1")
     var contexto = lienzo.getContext("2d")
@@ -90,12 +129,24 @@
     lienzo2.height = 512
     contexto2.fillStyle = "green"
 
+    var lienzoNivel = document.querySelector("#lienzoNivel")
+    var contextoNivel = lienzoNivel.getContext("2d")
+    lienzoNivel.width = 512
+    lienzoNivel.height = 512
+    contextoNivel.fillStyle = "green"
+
+    var lienzoFondo = document.querySelector("#lienzoFondo")
+    var contextoFondo = lienzoFondo.getContext("2d")
+    lienzoFondo.width = 512
+    lienzoFondo.height = 512
+    contextoFondo.fillStyle = "green"
+
     // Controles para mover jugador
     document.onkeydown = function (e) {
-      if (e.key == "ArrowUp") { jugador.y -= 5 }
+      if (e.key == "ArrowUp") { jugador.y -= 5; jugador.vy = salto }
       if (e.key == "ArrowDown") { jugador.y += 5 }
-      if (e.key == "ArrowLeft") { jugador.x -= 5 }
-      if (e.key == "ArrowRight") { jugador.x += 5 }
+      if (e.key == "ArrowLeft") { jugador.x -= 5; jugador.direccion = "izquierda" }
+      if (e.key == "ArrowRight") { jugador.x += 5; jugador.direccion = "derecha" }
     }
 
     var temporizador = setTimeout("bucle()", 1000)
