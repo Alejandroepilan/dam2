@@ -1,0 +1,8 @@
+{
+  "nombre": "Alejandro",
+  "apellidos": "Epila Navarro",
+  "emails": {
+    "personal": ["alejandroepilan@gmail.com"],
+    "profesional": ["info@aepila.com"]
+  }
+}
