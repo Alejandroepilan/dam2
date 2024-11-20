@@ -2,62 +2,33 @@
 <html>
 
 <head>
-  <style>
-    #tablero {
-      width: 850px;
-      height: 850px;
-      line-height: 0;
-    }
-
-    #tablero div {
-      border: 1px solid grey;
-      width: 100px;
-      height: 100px;
-      display: inline-block;
-      position: relative;
-    }
-
-    .celdablanca {
-      background: white;
-    }
-
-    .celdanegra {
-      background: black;
-    }
-
-    article {
-      width: 50px;
-      height: 50px;
-      background: grey;
-      border-radius: 50px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left: -25px;
-      margin-top: -25px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    .fichablanca {
-      border: 1px solid black;
-      background: white;
-    }
-
-    .fichanegra {
-      border: 1px solid white;
-      background: black;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <select id="seleccionajugador">
+    <option>Selecciona un rol</option>
+    <option value="p1">Soy el jugador 1 (negras)</option>
+    <option value="p2">Soy el jugador 2 (blancas)</option>
+    <option value="p0">Soy un espectador</option>
+  </select>
   <div id="tablero">
   </div>
   <script>
+    var jugador = "";
+    var coleccionfichas = [];
+
+    let selector = document.querySelector("#seleccionajugador")
+    selector.onchange = function () {
+      jugador = this.value
+    }
+
     var fichaseleccionada = "";
     let tablero = document.querySelector("#tablero")
     for (let i = 0; i < 64; i++) {
       let elemento = document.createElement("div")
+      elemento.setAttribute("id", "celda" + i)
+
       if ((i + Math.floor(i / 8)) % 2 == 0) {
         elemento.classList.add("celdablanca")
       } else {
@@ -67,8 +38,10 @@
         console.log(e.pageX, e.pageY)
         if (fichaseleccionada != "") {
           if (elemento.innerHTML == "") {
-            elemento.appendChild(fichaseleccionada)
-            fichaseleccionada = "";
+            if (elemento.classList.contains("celdablanca")) {
+              elemento.appendChild(fichaseleccionada)
+              fichaseleccionada = "";
+            }
           }
         }
       }
@@ -86,6 +59,19 @@
         elemento.appendChild(ficha)
       }
       tablero.appendChild(elemento)
+    }
+
+    var temporizador = setTimeout("bucle()", 1000)
+    function bucle() {
+      let fichas = document.querySelectorAll("article")
+      let mensaje = []
+      for (let i = 0; i < fichas.length; i++) {
+        mensaje.push({ "clase": fichas[i].classList[0], "celda": fichas[i].parentElement.getAttribute("id") })
+      }
+
+
+      clearTimeout(temporizador)
+      temporizador = setTimeout("bucle()", 1000)
     }
   </script>
 </body>

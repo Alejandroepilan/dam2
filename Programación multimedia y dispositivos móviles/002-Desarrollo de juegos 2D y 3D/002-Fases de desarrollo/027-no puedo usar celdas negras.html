@@ -67,8 +67,10 @@
         console.log(e.pageX, e.pageY)
         if (fichaseleccionada != "") {
           if (elemento.innerHTML == "") {
-            elemento.appendChild(fichaseleccionada)
-            fichaseleccionada = "";
+            if (elemento.classList.contains("celdablanca")) {
+              elemento.appendChild(fichaseleccionada)
+              fichaseleccionada = "";
+            }
           }
         }
       }

@@ -67,8 +67,10 @@
         console.log(e.pageX, e.pageY)
         if (fichaseleccionada != "") {
           if (elemento.innerHTML == "") {
-            elemento.appendChild(fichaseleccionada)
-            fichaseleccionada = "";
+            if (elemento.classList.contains("celdablanca")) {
+              elemento.appendChild(fichaseleccionada)
+              fichaseleccionada = "";
+            }
           }
         }
       }
@@ -86,6 +88,20 @@
         elemento.appendChild(ficha)
       }
       tablero.appendChild(elemento)
+    }
+
+    var temporizador = setTimeout("bucle()", 1000)
+    function bucle() {
+      let tablero = document.querySelector("#tablero").innerHTML
+      fetch("guarda.php?datos=" + encodeURI(tablero))
+        .then(function (response) {
+          return response.text()
+        })
+        .then(function (datos) {
+          console.log(datos)
+        })
+      clearTimeout(temporizador)
+      temporizador = setTimeout("bucle()", 1000)
     }
   </script>
 </body>
