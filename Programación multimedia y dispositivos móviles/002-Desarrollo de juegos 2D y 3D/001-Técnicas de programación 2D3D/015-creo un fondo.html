@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+
+    const escena = new THREE.Scene();                                   // En primer lugar creo una escena 3D
+    escena.background = new THREE.Color(0xcccccc)
+    const camara = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );                                                  // Camara, 75grados, proporcion como la pantalla, recorte cercano 0.1, rlejano 1000
+    const representador = new THREE.WebGLRenderer();         // Creo un renderizador que usa WebGL
+    representador.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );                                                //  Establezco la proporción del renderizador
+    document.body.appendChild(representador.domElement);     // Y lo añado al body
+
+    /*////////////////////// CREAMOS OBJETOS EN PANTALLA //////////////////////////*/
+
+    const geometriaPlano = new THREE.PlaneGeometry(5, 5);
+    const materialPlano = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const plano = new THREE.Mesh(geometriaPlano, materialPlano);
+    escena.add(plano);
+
+    plano.rotation.x = -Math.PI / 2
+
+
+    const geometria = new THREE.BoxGeometry();                           // Instancio una geometría vacía
+    const material = new THREE.MeshPhongMaterial({ color: 0xff0000 });  // Creo un nuevo material
+    const cubo = new THREE.Mesh(geometria, material);                    // Creo un nuevo cubo uniendo la geometría con el material
+    escena.add(cubo);                                   // en la escena añado el cubo
+
+    cubo.position.y = 0.5
+
+    const geometriaesfera = new THREE.SphereGeometry(0.5, 32, 16);
+    const materialesfera = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const esfera = new THREE.Mesh(geometriaesfera, materialesfera)
+    esfera.position.x = 2
+    escena.add(esfera);
+
+    /*////////////////////// CREAMOS LUCES EN PANTALLA //////////////////////////*/
+    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+    pointLight.position.set(0, 5, 0);
+    escena.add(pointLight);
+
+    const light = new THREE.AmbientLight(0x404040);
+    escena.add(light);
+
+    // Controles para mover al jugador con las teclas del teclado ////////////////////////////////
+    x = 1
+    y = 0
+    document.onkeydown = function (e) {
+      if (e.key == "ArrowUp") { y += 0.1 }
+      if (e.key == "ArrowDown") { y -= 0.1 }
+      if (e.key == "ArrowLeft") { x -= 0.1 }         // Esto es lo que ocurre cuando el jugador pulsa la flecha izquierda
+      if (e.key == "ArrowRight") { x += 0.1 }           // Esto es lo que ocurre cuando el jugador pulsa la flecha derecha
+    }
+
+    camara.position.z = 5;
+    camara.position.y = 2;
+
+    function animar() {
+      esfera.position.x = x
+      esfera.position.y = y
+      requestAnimationFrame(animar);
+      representador.render(escena, camara);        // Renderizar la escena desde la perspectiva de la cámara
+    }
+    animar();  
+  </script>
+</body>
+
+</html>

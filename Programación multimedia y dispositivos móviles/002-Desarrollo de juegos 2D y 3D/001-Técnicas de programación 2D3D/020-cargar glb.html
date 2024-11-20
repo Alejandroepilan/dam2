@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three.js</title>
+  <style>
+    body,
+    html {
+      margin: 0px;
+      padding: 0px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./build/three.module.js",
+        "three/addons/": "./jsm/"
+      }
+    }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+    const escena = new THREE.Scene();                                   // En primer lugar creo una escena 3D
+    escena.background = new THREE.Color(0xcccccc)
+    const camara = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );                                                  // Camara, 75grados, proporcion como la pantalla, recorte cercano 0.1, rlejano 1000
+    const representador = new THREE.WebGLRenderer();         // Creo un renderizador que usa WebGL
+    representador.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );                                                //  Establezco la proporción del renderizador
+    document.body.appendChild(representador.domElement);     // Y lo añado al body
+
+    ////////////////////// CARGAR TEXTURAS //////////////////////////
+
+    const cargaTextura = new THREE.TextureLoader()
+    const texturaSuelo = cargaTextura.load("suelo.jpg")
+
+    const cargaTexturaEsfera = new THREE.TextureLoader()
+    const texturaEsfera = cargaTexturaEsfera.load("fondo.jpg")
+
+    /*////////////////////// CREAMOS OBJETOS EN PANTALLA //////////////////////////*/
+
+    const geometriaPlano = new THREE.PlaneGeometry(5, 5);
+    const materialPlano = new THREE.MeshPhongMaterial({ map: texturaSuelo });
+    const plano = new THREE.Mesh(geometriaPlano, materialPlano);
+    escena.add(plano);
+
+    plano.rotation.x = -Math.PI / 2
+
+
+    const geometria = new THREE.BoxGeometry();                           // Instancio una geometría vacía
+    const material = new THREE.MeshPhongMaterial({ color: 0xff0000 });  // Creo un nuevo material
+    const cubo = new THREE.Mesh(geometria, material);                    // Creo un nuevo cubo uniendo la geometría con el material
+    escena.add(cubo);                                   // en la escena añado el cubo
+
+    cubo.position.y = 0.5
+
+    const geometriaesfera = new THREE.SphereGeometry(0.5, 32, 16);
+    const materialesfera = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const esfera = new THREE.Mesh(geometriaesfera, materialesfera)
+    esfera.position.x = 2
+    escena.add(esfera);
+
+    const geometriaEntornoEsferico = new THREE.SphereGeometry(15, 32, 16);
+    const materialEsferaEntorno = new THREE.MeshBasicMaterial({ map: texturaEsfera, side: THREE.BackSide });
+    const esferaEntorno = new THREE.Mesh(geometriaEntornoEsferico, materialEsferaEntorno)
+    escena.add(esferaEntorno);
+
+    ////////////////////// CARGAMOS OBJETOS EXTERNOS /////////////////////////
+
+    const loader = new GLTFLoader();
+    loader.load(
+      'mono2.glb', // Path to the .glb file
+      function (gltf) {
+        escena.add(gltf.scene); // Add the loaded scene to your Three.js scene
+        escena.add(pointLight);
+      },
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded'); // Optional: Track progress
+      },
+      function (error) {
+        console.error('An error happened while loading the GLB model', error);
+      }
+    );
+
+    /*////////////////////// CREAMOS LUCES EN PANTALLA //////////////////////////*/
+    const pointLight = new THREE.PointLight(0xffffff, 3, 100);
+    pointLight.position.set(0, 2, 0);
+
+    const light = new THREE.AmbientLight(0x404040);
+    escena.add(light);
+
+    // Controles para mover al jugador con las teclas del teclado ////////////////////////////////
+    let x = 1
+    let y = 0
+    document.onkeydown = function (e) {
+      if (e.key == "ArrowUp") { y -= 0.1 }
+      if (e.key == "ArrowDown") { y += 0.1 }
+      if (e.key == "ArrowLeft") { x -= 0.1 }         // Esto es lo que ocurre cuando el jugador pulsa la flecha izquierda
+      if (e.key == "ArrowRight") { x += 0.1 }           // Esto es lo que ocurre cuando el jugador pulsa la flecha derecha
+    }
+
+    camara.position.z = 5;
+    camara.position.y = 2;
+
+    function animar() {
+      camara.position.x = x
+      camara.position.z = y
+      requestAnimationFrame(animar);
+      representador.render(escena, camara);        // Renderizar la escena desde la perspectiva de la cámara
+    }
+    animar();  
+  </script>
+</body>
+
+</html>
