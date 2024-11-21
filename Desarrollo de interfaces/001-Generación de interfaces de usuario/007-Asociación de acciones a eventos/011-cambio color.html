@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
+  <input type="color" id="color">
+  <canvas></canvas>
+  <script>
+    var pulsado = false;
+    document.onmousedown = function () { pulsado = true; }
+    document.onmouseup = function () { pulsado = false; }
+    const lienzo = document.querySelector("canvas")
+    const contexto = lienzo.getContext("2d")
+    contexto.fillStyle = "black"
+    lienzo.width = 512
+    lienzo.height = 512
+    lienzo.onmousemove = function (e) {
+      if (pulsado) {
+        contexto.fillRect(e.offsetX, e.offsetY, 2, 2)
+      }
+    }
+    document.getElementById("color").onchange = function () {
+      contexto.fillStyle = this.value
+    }
+  </script>
+</body>
+
+</html>
