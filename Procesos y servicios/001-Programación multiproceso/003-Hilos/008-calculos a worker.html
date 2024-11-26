@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="lienzo1"></canvas>
+  <script>
+    const tiempoinicio = new Date()
+    const epochinicio = tiempoinicio.getTime()
+
+    const lienzo = document.querySelector("#lienzo1")
+    lienzo.width = 6000
+    lienzo.height = 4000
+    const contexto = lienzo.getContext("2d")
+
+    var imagen = new Image()
+    imagen.src = "foto.jpg";
+    imagen.onload = function () {
+      contexto.drawImage(imagen, 0, 0)
+      var datos = contexto.getImageData(0, 0, 6000, 4000)
+
+      var trabajador = new Worker("008-worker.js");
+      trabajador.postMessage(datos.data)
+
+      trabajador.onmessage = function (misdatos) {
+        for (let i = 0; i < datos.data.length; i++) {
+          datos.data[i] = misdatos.data[i]
+        }
+
+        contexto.putImageData(datos, 0, 0)
+        const tiempofinal = new Date()
+        const epochfinal = tiempofinal.getTime()
+        const resta = epochfinal - epochinicio;
+        console.log("Esta operacion tarda en hacerse", resta, "milisegundos")
+      }
+    }
+
+  </script>
+</body>
+
+</html>

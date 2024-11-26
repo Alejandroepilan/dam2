@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="lienzo1"></canvas>
+  <script>
+    var x;
+    var y;
+    var bucket;
+
+    const lienzo = document.querySelector("#lienzo1")
+    lienzo.width = 1024
+    lienzo.height = 1024
+    const contexto = lienzo.getContext("2d")
+
+    var imagen = new Image()
+    imagen.src = "imagenoriginal.jpg";
+    imagen.onload = function () {
+      contexto.drawImage(imagen, 0, 0)
+
+      bucket = 64
+      x = 0;
+      y = 0;
+
+      trabajaMucho()
+    }
+
+    function trabajaMucho() {
+      datos1 = contexto.getImageData(x, y, bucket, bucket)
+      var trabajador = new Worker("011-worker.js");
+      trabajador.postMessage(datos1.data)
+
+      trabajador.onmessage = function (misdatos) {
+        for (let i = 0; i < datos1.data.length; i++) {
+          datos1.data[i] = misdatos.data[i]
+        }
+        contexto.putImageData(datos1, x - bucket, y)
+      }
+      x += bucket;
+      if (x > 1024) {
+        x = 0
+        y += bucket
+      }
+      if (x < 1100 && y < 1100) {
+        setTimeout(function () {
+          trabajaMucho()
+        }, 100)
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>

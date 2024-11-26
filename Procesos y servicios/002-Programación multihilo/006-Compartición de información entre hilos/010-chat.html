@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <main>
+    <section></section>
+    <input id="mensaje">
+  </main>
+  <script>
+    function bucle() {
+      fetch("http://192.168.1.225:5000/dame")
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (datos) {
+          let seccion = document.querySelector("section")
+          seccion.innerHTML = ""
+          datos.forEach(function (dato) {
+            seccion.innerHTML += dato.mensaje + "<br>";
+          })
+        })
+      clearTimeout(temporizador)
+      temporizador = setTimeout("bucle()", 1000)
+    }
+
+    let entrada = document.querySelector("input")
+    entrada.onchange = function () {
+      fetch("http://192.168.1.225:5000/toma?mensaje=" + encodeURI(this.value))
+    }
+
+    var temporizador = setTimeout("bucle()", 1000)
+  </script>
+</body>
+
+</html>

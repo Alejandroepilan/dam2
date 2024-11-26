@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let inicio = new Date();
+    let epochinicio = inicio.getTime();
+
+    let numero = 1.0000000054;
+    let iteraciones = 10000000000;
+    for (let i = 0; i < iteraciones; i++) {
+      numero *= 1.000000000076;
+    }
+
+    let final = new Date();
+    let epochfinal = final.getTime();
+    let resta = epochfinal - epochinicio;
+    console.log("La diferencia de tiempo ha sido de ", resta); 
+  </script>
+</body>
+
+</html>

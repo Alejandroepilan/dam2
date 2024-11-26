@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const navegador = navigator;
+    console.log(navegador);
+    const nucleos = navegador.hardwareConcurrency
+    console.log("Tu ordenador tiene", nucleos, "núcleos")
+
+    let trabajadores = [];
+    let numerotrabajadores = 12;
+    for (let w = 0; w < numerotrabajadores; w++) {
+      trabajadores[w] = new Worker("008-worker.js");
+      trabajadores[w].postMessage(w);
+      trabajadores[w].onmessage = function (e) {
+        //console.log("El worker me ha devuelto un mensaje")
+        //console.log("Y el worker dice:", e.data)
+      }
+    }
+  </script>
+</body>
+
+</html>

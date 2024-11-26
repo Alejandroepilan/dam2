@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input>
+  <script>
+    var entrada = document.querySelector("input")
+    entrada.onchange = function () {
+      console.log("Ok te has identificado como", this.value)
+      fetch("003.php?usuario=" + encodeURI(this.value))
+    }
+  </script>
+</body>
+
+</html>

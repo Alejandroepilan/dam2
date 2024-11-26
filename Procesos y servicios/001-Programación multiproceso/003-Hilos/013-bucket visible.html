@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #contienecanvas {
+      position: relative;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="comenzar">Comenzar</button>
+  <select id="tamanio">
+    <option value="4">4</option>
+    <option value="8">8</option>
+    <option value="16">16</option>
+    <option value="32">32</option>
+    <option value="64">64</option>
+    <option value="128">128</option>
+    <option value="256">256</option>
+  </select>
+  <div id="contienecanvas">
+    <canvas id="lienzo1"></canvas>
+    <canvas id="lienzo2"></canvas>
+  </div>
+  <script>
+    var x;
+    var y;
+    var bucket;
+
+    const lienzo = document.querySelector("#lienzo1")
+    lienzo.width = 1024
+    lienzo.height = 1024
+    const contexto = lienzo.getContext("2d")
+
+    const lienzo2 = document.querySelector("#lienzo2")
+    lienzo2.width = 1024
+    lienzo2.height = 1024
+    const contexto2 = lienzo2.getContext("2d")
+
+    var imagen = new Image()
+    imagen.src = "imagenoriginal.jpg";
+    imagen.onload = function () {
+      contexto.drawImage(imagen, 0, 0)
+
+      bucket = 64
+      x = 0;
+      y = 0;
+    }
+
+    document.getElementById("comenzar").onclick = function () {
+      bucket = parseInt(document.getElementById("tamanio").value)
+      trabajaMucho()
+    }
+
+    function trabajaMucho() {
+      contexto2.clearRect(0, 0, 1024, 1024)
+      contexto2.strokeStyle = "red"
+      contexto2.lineWidth = 6
+      contexto2.beginPath()
+      contexto2.strokeRect(x, y, bucket, bucket)
+      contexto2.stroke()
+
+      datos1 = contexto.getImageData(x, y, bucket, bucket)
+      var trabajador = new Worker("013-worker.js");
+      trabajador.postMessage(datos1.data)
+
+      trabajador.onmessage = function (misdatos) {
+        for (let i = 0; i < datos1.data.length; i++) {
+          datos1.data[i] = misdatos.data[i]
+        }
+        contexto.putImageData(datos1, x - bucket, y)
+      }
+      x += bucket;
+      if (x > 1024) {
+        x = 0
+        y += bucket
+      }
+      if (x < 1100 && y < 1100) {
+        setTimeout(function () {
+          trabajaMucho()
+        }, 100)
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>
