@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .jvwysiwyg .editor {
+      width: 500px;
+      height: 500px;
+      border: 1px solid grey;
+    }
+  </style>
+</head>
+
+<body>
+  <textarea name="uno"></textarea>
+  <textarea name="dos"></textarea>
+  <script>
+    let textos = document.querySelectorAll("textarea")
+    console.log("tengo", textos.length, "textareas")
+    textos.forEach(function (textarea) {
+      let nuevocontenedor = document.createElement("div")
+      nuevocontenedor.setAttribute("class", "jvwysiwyg")
+      textarea.replaceWith(nuevocontenedor)
+      textarea.style.display = "none"
+      let mieditor = document.createElement("div")
+      mieditor.classList.add("editor")
+      nuevocontenedor.appendChild(mieditor)
+    })
+  </script>
+</body>
+
+</html>
