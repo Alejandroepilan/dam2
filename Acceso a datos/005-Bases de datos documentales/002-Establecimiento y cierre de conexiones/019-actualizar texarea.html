@@ -42,6 +42,7 @@
       let nuevocontenedor = document.createElement("div")
       nuevocontenedor.setAttribute("class", "jvwysiwyg")
       textarea.replaceWith(nuevocontenedor)
+      nuevocontenedor.appendChild(textarea)
       textarea.style.display = "none"
 
       let botonera = document.createElement("div")
@@ -52,18 +53,52 @@
       botonnegrita.innerHTML = "<b>B</b>"
       botonera.appendChild(botonnegrita)
       botonnegrita.onclick = function () {
-        console.log("Has hecho click")
-        let contenido = window.getSelection().toString()
+        reemplaza("b")
+      }
 
-        console.log(contenido)
-        //contenido = "<b>" + contenido + "</b>"
-        //mieditor.innerHTML = contenido
+      let botonitalica = document.createElement("button")
+      botonitalica.innerHTML = "<i>i</i>"
+      botonera.appendChild(botonitalica)
+      botonitalica.onclick = function () {
+        reemplaza("i")
+      }
+
+      let botonsubrayado = document.createElement("button")
+      botonsubrayado.innerHTML = "<u>U</u>"
+      botonera.appendChild(botonsubrayado)
+      botonsubrayado.onclick = function () {
+        reemplaza("u")
       }
 
       let mieditor = document.createElement("div")
       mieditor.classList.add("editor")
       nuevocontenedor.appendChild(mieditor)
       mieditor.setAttribute("contenteditable", "true")
+
+      mieditor.onkeypress = function () {
+        actualizaTextarea()
+      }
+
+      function actualizaTextarea() {
+        let contenido = mieditor.innerHTML
+        textarea.textContent = contenido
+      }
+
+      function reemplaza(etiqueta) {
+        let selectedText = window.getSelection().toString();  // Leo el contenido
+
+        // Check if text is selected
+        if (selectedText.length > 0) {
+          let range = window.getSelection().getRangeAt(0);  // Get the range of selected text
+          let boldElement = document.createElement(etiqueta);    // Create <b> element
+          boldElement.textContent = selectedText;           // Set selected text as content of <b> tag
+
+          // Replace the selected text with bolded version
+          range.deleteContents();                           // Remove original selection
+          range.insertNode(boldElement);                    // Insert new <b> element with text
+        }
+        actualizaTextarea()
+      }
     })
   </script>
 </body>

@@ -53,11 +53,19 @@
       botonera.appendChild(botonnegrita)
       botonnegrita.onclick = function () {
         console.log("Has hecho click")
-        let contenido = window.getSelection().toString()
 
-        console.log(contenido)
-        //contenido = "<b>" + contenido + "</b>"
-        //mieditor.innerHTML = contenido
+        let selectedText = window.getSelection().toString();  // Leo el contenido
+
+        // Check if text is selected
+        if (selectedText.length > 0) {
+          let range = window.getSelection().getRangeAt(0);  // Get the range of selected text
+          let boldElement = document.createElement("b");    // Create <b> element
+          boldElement.textContent = selectedText;           // Set selected text as content of <b> tag
+
+          // Replace the selected text with bolded version
+          range.deleteContents();                           // Remove original selection
+          range.insertNode(boldElement);                    // Insert new <b> element with text
+        }
       }
 
       let mieditor = document.createElement("div")

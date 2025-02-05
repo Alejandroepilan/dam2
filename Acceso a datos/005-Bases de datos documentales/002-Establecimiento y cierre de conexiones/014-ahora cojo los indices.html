@@ -54,6 +54,9 @@
       botonnegrita.onclick = function () {
         console.log("Has hecho click")
         let contenido = window.getSelection().toString()
+        let contenidoCompleto = mieditor.innerHTML
+        let inicio = contenidoCompleto.indexOf(contenido)
+        let final = contenidoCompleto.indexOf(contenido) + contenido.length
 
         console.log(contenido)
         //contenido = "<b>" + contenido + "</b>"

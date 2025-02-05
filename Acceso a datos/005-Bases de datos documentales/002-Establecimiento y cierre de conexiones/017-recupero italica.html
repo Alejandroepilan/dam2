@@ -52,18 +52,35 @@
       botonnegrita.innerHTML = "<b>B</b>"
       botonera.appendChild(botonnegrita)
       botonnegrita.onclick = function () {
-        console.log("Has hecho click")
-        let contenido = window.getSelection().toString()
+        reemplaza("b")
+      }
 
-        console.log(contenido)
-        //contenido = "<b>" + contenido + "</b>"
-        //mieditor.innerHTML = contenido
+      let botonitalica = document.createElement("button")
+      botonitalica.innerHTML = "<i>i</i>"
+      botonera.appendChild(botonitalica)
+      botonitalica.onclick = function () {
+        reemplaza("i")
       }
 
       let mieditor = document.createElement("div")
       mieditor.classList.add("editor")
       nuevocontenedor.appendChild(mieditor)
       mieditor.setAttribute("contenteditable", "true")
+
+      function reemplaza(etiqueta) {
+        let selectedText = window.getSelection().toString();  // Leo el contenido
+
+        // Check if text is selected
+        if (selectedText.length > 0) {
+          let range = window.getSelection().getRangeAt(0);  // Get the range of selected text
+          let boldElement = document.createElement(etiqueta);    // Create <b> element
+          boldElement.textContent = selectedText;           // Set selected text as content of <b> tag
+
+          // Replace the selected text with bolded version
+          range.deleteContents();                           // Remove original selection
+          range.insertNode(boldElement);                    // Insert new <b> element with text
+        }
+      }
     })
   </script>
 </body>
