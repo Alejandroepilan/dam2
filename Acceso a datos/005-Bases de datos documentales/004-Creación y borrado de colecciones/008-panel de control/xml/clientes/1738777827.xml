@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<root>
+  <staticData>
+    <customerName>ss</customerName>
+    <Apellidos>aaa</Apellidos>
+    <Email>aaa</Email>
+  </staticData>
+  <dynamicData/>
+</root>
