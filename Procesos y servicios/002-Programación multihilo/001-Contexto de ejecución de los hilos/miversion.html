@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta de tareas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-lg rounded p-6 max-w-md w-full text-center">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">Consulta de tareas</h1>
+
+    <input id="usuario" type="text" placeholder="Nombre de usuario"
+      class="border border-gray-300 rounded px-4 py-2 w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+    <button id="enviar"
+      class="bg-blue-600 text-white font-semibold px-6 py-2 rounded hover:bg-blue-700 w-full transition">
+      Consultar
+    </button>
+
+    <div id="resultado" class="mt-6 text-lg font-medium text-green-600"></div>
+  </div>
+  <script>
+    document.getElementById("enviar").onclick = function () {
+      const usuario = document.getElementById("usuario").value
+      const resultadoDiv = document.getElementById("resultado");
+
+      if (!usuario) {
+        alert("Por favor, introduce tu nombre de usuario");
+        return;
+      }
+
+      console.log("Ok te has identificado como", usuario)
+
+      resultadoDiv.textContent = "Cargando...";
+
+      fetch("miversion.php?usuario=" + encodeURIComponent(usuario))
+        .then(function (response) {
+          return response.text()
+        })
+        .then(function (datos) {
+
+          console.log(datos)
+          let conjunto = JSON.parse(datos)
+          console.log(conjunto)
+          let suma = 0;
+          for (let i = 0; i < conjunto.length; i++) {
+            suma += conjunto[i]
+          }
+
+          resultadoDiv.textContent = "La suma de tus tareas es: " + suma;
+
+          fetch("miversion-resultado.php?resultado=" + suma)
+        })
+    }
+  </script>
+</body>
+
+</html>

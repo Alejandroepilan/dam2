@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+</head>
+
+<body class="bg-green-100 h-screen w-screen flex items-center justify-center">
+  <main class="shadow-xl rounded-lg w-full max-w-3xl h-[90vh] flex flex-col overflow-hidden">
+
+    <div class="px-4 py-2 border-b border-gray-200 bg-gray-50">
+      <input id="usuario" type="text" placeholder="Nombre de usuario" class="w-full bg-gray-50 focus:outline-none" />
+    </div>
+
+    <section id="chatbox" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 bg-gray-100"></section>
+
+    <div class="p-3 border-t bg-white flex gap-2">
+      <input id="mensaje" type="text" placeholder="Escribe un mensaje" class="w-full focus:outline-none" />
+    </div>
+  </main>
+  <script>
+    function bucle() {
+      fetch("http://127.0.0.1:5000/dame")
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (datos) {
+          console.log(datos)
+          let seccion = document.querySelector("section")
+          seccion.innerHTML = ""
+          datos.forEach(function (dato) {
+            const linea = document.createElement("div"); // contenedor por linea
+            linea.className = "flex";
+
+            const bloque = document.createElement("div");
+            bloque.className = "bg-white rounded-lg p-3 shadow text-left inline-block max-w-[70%] break-words";
+
+            let autor = document.createElement("h3")
+            autor.className = "text-xs font-bold text-green-700 mb-1";
+            autor.textContent = dato.usuario
+
+            let parrafo = document.createElement("p")
+            parrafo.className = "text-sm text-gray-800";
+            parrafo.textContent = dato.mensaje
+
+            bloque.appendChild(autor)
+            bloque.appendChild(parrafo)
+            linea.appendChild(bloque);         // mete la burbuja dentro de la linea
+            seccion.appendChild(linea);        // añade la linea al chat
+
+          })
+          seccion.scrollTop = 100000000000 // hace scroll al final del chat, pero cada vez que se actualiza
+        })
+      clearTimeout(temporizador)
+      temporizador = setTimeout("bucle()", 1000)
+    }
+
+    let entrada = document.querySelector("#mensaje")
+    let usuario = document.querySelector("#usuario")
+
+    entrada.onkeydown = function (e) {
+      if (e.key === "Enter") {
+        const texto = this.value;
+        const nombre = usuario.value;
+
+        if (!nombre) {
+          alert("Por favor, introduce tu nombre de usuario.");
+          return;
+        }
+
+        if (!texto) return;
+
+        fetch("http://127.0.0.1:5000/toma?mensaje=" + encodeURIComponent(texto) + "&usuario=" + encodeURIComponent(nombre));
+        this.value = "";
+      }
+    };
+
+    var temporizador = setTimeout("bucle()", 1000)   
+  </script>
+</body>
+
+</html>

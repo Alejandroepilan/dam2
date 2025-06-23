@@ -11,9 +11,9 @@ class Cliente:
     self.emails = {"personal":listapersonal,"profesional":listaprofesional}
   def to_dict(self):
     return {
-        "nombre": self.nombre,
-        "apellidos": self.apellidos,
-        "emails": self.emails
+      "nombre": self.nombre,
+      "apellidos": self.apellidos,
+      "emails": self.emails
     }
 
 class Producto:

@@ -26,7 +26,6 @@ class EpilaCodifica
   }
 }
 
-// Ejemplo de uso
 $codificador = new EpilaCodifica();
 
 $textoOriginal = "Hola mundo!";

@@ -1,8 +1,0 @@
-{
-    "nombre": "aaa",
-    "apellidos": "bbb",
-    "emails": {
-        "personal": "ccc",
-        "profesional": "ddd"
-    }
-}

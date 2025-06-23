@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="resultados" class="p-4 text-sm font-mono bg-gray-100 rounded mt-4"></div>
+
+  <script>
+    const navegador = navigator;
+    console.log(navegador);
+    const nucleos = navegador.hardwareConcurrency
+    console.log("Tu ordenador tiene", nucleos, "núcleos")
+
+    let trabajadores = [];
+    let numerotrabajadores = 12;
+    let semaforo = 0
+
+    for (let w = 0; w < numerotrabajadores; w++) {
+      trabajadores[w] = new Worker("009-worker.js");
+      trabajadores[w].postMessage(w);
+      trabajadores[w].onmessage = function (e) {
+        semaforo++;
+
+        let resultados = document.getElementById("resultados");
+        resultados.innerHTML += `✅ Worker ${w} ha respondido<br>`;
+
+        if (semaforo === numerotrabajadores) {
+          resultados.innerHTML += `<strong class="text-green-600">✅ Todos los núcleos han vuelto</strong><br>`;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

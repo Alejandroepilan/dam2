@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procesamiento de imagen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center justify-start py-8">
+
+  <h1 class="text-3xl font-bold mb-6">Procesar imagen por bloques</h1>
+
+  <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+    <select id="tamanio" class="border border-gray-300 rounded px-3 py-2">
+      <option value="4">4</option>
+      <option value="8">8</option>
+      <option value="16">16</option>
+      <option value="32" selected>32</option>
+      <option value="64">64</option>
+      <option value="128">128</option>
+      <option value="256">256</option>
+    </select>
+    <button id="comenzar" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow">
+      Comenzar
+    </button>
+  </div>
+
+
+  <div id="contienecanvas" class="relative w-[512px] h-[512px] mx-auto border border-gray-300 overflow-hidden">
+    <canvas id="lienzo1" class="absolute top-0 left-0 z-0 w-full h-full"></canvas>
+    <canvas id="lienzo2" class="absolute top-0 left-0 z-10 w-full h-full"></canvas>
+  </div>
+
+  <div class="w-full mt-4 max-w-md mx-auto text-center">
+    <p id="estado" class="text-lg font-semibold text-blue-600 text-center"></p>
+    <p id="tiempo" class="text-lg font-medium"></p>
+  </div>
+
+  <script>
+    var x;
+    var y;
+    var bucket;
+
+    const estadoTexto = document.getElementById("estado");
+    const tiempoTexto = document.getElementById("tiempo");
+
+    const lienzo = document.querySelector("#lienzo1")
+    lienzo.width = 1024
+    lienzo.height = 1024
+    const contexto = lienzo.getContext("2d")
+
+    const lienzo2 = document.querySelector("#lienzo2")
+    lienzo2.width = 1024
+    lienzo2.height = 1024
+    const contexto2 = lienzo2.getContext("2d")
+
+    var imagen = new Image()
+    imagen.src = "imagenoriginal.jpg";
+    imagen.onload = function () {
+      contexto.drawImage(imagen, 0, 0)
+
+      bucket = 64
+      x = 0;
+      y = 0;
+    }
+
+    document.getElementById("comenzar").onclick = function () {
+      bucket = parseInt(document.getElementById("tamanio").value)
+
+      estadoTexto.textContent = "Procesando...";
+      tiempoTexto.textContent = "";
+      tiempoInicio = performance.now();
+
+      trabajaMucho()
+    }
+
+    function trabajaMucho() {
+      contexto2.clearRect(0, 0, 1024, 1024)
+      contexto2.strokeStyle = "red"
+      contexto2.lineWidth = 6
+      contexto2.beginPath()
+      contexto2.strokeRect(x, y, bucket, bucket)
+      contexto2.stroke()
+
+      datos1 = contexto.getImageData(x, y, bucket, bucket)
+      var trabajador = new Worker("013-worker.js");
+      trabajador.postMessage(datos1.data)
+
+      trabajador.onmessage = function (misdatos) {
+        for (let i = 0; i < datos1.data.length; i++) {
+          datos1.data[i] = misdatos.data[i]
+        }
+        contexto.putImageData(datos1, x - bucket, y)
+      }
+      x += bucket;
+      if (x > 1024) {
+        x = 0
+        y += bucket
+      }
+      if (x < 1100 && y < 1100) {
+        setTimeout(function () {
+          trabajaMucho()
+        }, 100)
+      }
+
+      if (x === 0 && y >= 1024) {
+        const tiempoFinal = performance.now();
+        const tiempoTotal = ((tiempoFinal - tiempoInicio) / 1000).toFixed(2);
+        estadoTexto.textContent = "Finalizado";
+        tiempoTexto.textContent = `Tiempo total: ${tiempoTotal} segundos`;
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>
