@@ -1,160 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XML Control Panel</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #0056b3;
-    }
-
-    .folder {
-      margin-bottom: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background-color: #fff;
-      border-radius: 5px;
-    }
-
-    .folder h2 {
-      margin-bottom: 10px;
-      color: #007bff;
-    }
-
-    .file-list {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .file-list li {
-      padding: 5px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-    }
-
-    .file-list li:last-child {
-      border-bottom: none;
-    }
-
-    button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 5px;
-      width: 80%;
-      max-height: 80%;
-      overflow-y: auto;
-    }
-
-    .modal-content pre {
-      font-family: monospace;
-      background-color: #f9f9f9;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .close-btn {
-      display: block;
-      margin-left: auto;
-      margin-right: 0;
-      background-color: #dc3545;
-      padding: 5px 10px;
-    }
-
-    .close-btn:hover {
-      background-color: #a71d2a;
-    }
-  </style>
+  <title>Panel de control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-  <h1>XML Control Panel</h1>
+<body class="bg-gray-100 min-h-screen py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-blue-700 text-center mb-4">Panel de control</h1>
+    <p class="text-center text-gray-600 mb-10">Aquí puedes ver y gestionar los archivos XML.</p>
 
-  <?php
-  function parseDirectory($baseDir)
-  {
-    $items = scandir($baseDir);
-    foreach ($items as $item) {
-      if ($item === '.' || $item === '..') {
-        continue;
-      }
+    <?php
+    function parseDirectory($baseDir)
+    {
+      $items = scandir($baseDir);
+      foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+          continue;
+        }
 
-      $fullPath = $baseDir . '/' . $item;
+        $fullPath = $baseDir . '/' . $item;
 
-      if (is_dir($fullPath)) {
-        echo "<div class='folder'>";
-        echo "<h2>Folder: $item</h2>";
-        echo "<ul class='file-list'>";
-        parseDirectory($fullPath); // Recursive call for subdirectories
-        echo "</ul>";
-        echo "</div>";
-      } elseif (pathinfo($fullPath, PATHINFO_EXTENSION) === 'xml') {
-        echo "<li>
-                        $item 
-                        <button onclick=\"viewContent('$fullPath')\">View</button>
-                      </li>";
+        if (is_dir($fullPath)) {
+          echo "<div class='bg-white shadow rounded-lg mb-6 p-4'>";
+          echo "<h2 class='text-xl font-semibold text-blue-600 mb-3'>📁 $item</h2>";
+          echo "<ul class='divide-y divide-gray-200'>";
+          parseDirectory($fullPath); // recursivo
+          echo "</ul></div>";
+        } elseif (pathinfo($fullPath, PATHINFO_EXTENSION) === 'xml') {
+          echo "<li class='flex items-center justify-between py-2'>
+                  <span class='text-gray-700'>$item</span>
+                  <button onclick=\"viewContent('$fullPath')\" class='bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1 rounded'>
+                    Ver
+                  </button>
+                </li>";
+        }
       }
     }
-  }
 
-  $baseDir = 'xml';
-  if (!is_dir($baseDir)) {
-    echo "<p>XML base directory does not exist.</p>";
-    exit;
-  }
+    $baseDir = 'xml';
+    if (!is_dir($baseDir)) {
+      echo "<p class='text-center text-red-600 font-semibold'>❌ El directorio XML no existe.</p>";
+      exit;
+    }
 
-  echo "<ul class='file-list'>";
-  parseDirectory($baseDir);
-  echo "</ul>";
-  ?>
+    echo "<ul class='space-y-4'>";
+    parseDirectory($baseDir);
+    echo "</ul>";
+    ?>
 
-  <!-- Modal -->
-  <div id="contentModal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">Close</button>
-      <pre id="contentViewer"></pre>
+    <!-- Modal -->
+    <div id="contentModal" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div class="bg-white max-w-3xl w-full mx-4 rounded-lg shadow-lg p-6 overflow-auto max-h-[80vh] relative">
+        <button onclick="closeModal()" class="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">Cerrar</button>
+        <h2 class="text-lg font-bold mb-4 text-gray-800">📄 Contenido del archivo</h2>
+        <pre id="contentViewer" class="bg-gray-100 p-4 rounded border text-sm text-gray-800 overflow-auto whitespace-pre-wrap"></pre>
+      </div>
     </div>
+
   </div>
 
   <script>

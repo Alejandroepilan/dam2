@@ -1,45 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="estilo.css">
-  <title>Dynamic Form</title>
-  <style>
-    .dynamic-group {
-      margin-bottom: 15px;
-    }
-
-    .dynamic-line {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .dynamic-line input {
-      flex: 1;
-    }
-
-    .add-line-btn {
-      margin: 10px 0;
-    }
-
-    .remove-line-btn {
-      margin-left: 10px;
-    }
-  </style>
+  <title>Formulario dinamico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-  <form id="dynamicForm">
-    <!-- Static fields container -->
-    <div id="staticFields"></div>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-6">
+  <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow hidden">
+    Enviado correctamente
+  </div>
 
-    <!-- Dynamic fields container -->
-    <div id="dynamicFieldsContainer"></div>
+  <form id="dynamicForm" class="bg-white w-full max-w-3xl p-6 rounded-lg shadow-md space-y-6">
+    <h1 class="text-2xl font-bold text-blue-700 text-center">Formulario dinamico XML</h1>
 
-    <button type="submit">Submit Form</button>
+    <div id="staticFields" class="space-y-4"></div>
+
+    <div id="dynamicFieldsContainer" class="space-y-6"></div>
+
+    <div class="flex flex-col items-center space-y-4">
+      <button type="submit"
+        class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition">
+        Enviar formulario
+      </button>
+      <button type="reset" class="text-sm text-blue-600 font-semibold">Limpiar formulario</button>
+    </div>
+
+
+
   </form>
 
   <script>
@@ -50,36 +40,33 @@
       const dynamicFieldsContainer = document.getElementById('dynamicFieldsContainer');
 
       try {
-        // Fetch and parse the XML file
         const response = await fetch('modelos/' + urlParams.get('f') + '.xml');
         const xmlText = await response.text();
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, 'application/xml');
 
-        // Render static fields
+        // Campos estaticos
         const staticFields = xml.querySelectorAll('fields > field');
         staticFields.forEach(field => {
           renderField(field, staticFieldsContainer);
         });
 
-        // Render dynamic fields
+        // Campos dinamicos
         const dynamicFieldGroups = xml.querySelectorAll('dynamicFields > fieldGroup');
         dynamicFieldGroups.forEach(fieldGroup => {
           renderDynamicFieldGroup(fieldGroup, dynamicFieldsContainer);
         });
 
-        // Handle form submission
+        // Submit
         formContainer.addEventListener('submit', async (event) => {
           event.preventDefault();
 
-          // Collect static field values
           const staticData = {};
           staticFields.forEach(field => {
             const name = field.querySelector('name').textContent;
             staticData[name] = document.querySelector(`[name="${name}"]`).value;
           });
 
-          // Collect dynamic field group values
           const dynamicData = [];
           dynamicFieldsContainer.querySelectorAll('.dynamic-group').forEach(group => {
             const groupData = Array.from(group.querySelectorAll('.dynamic-line')).map(line => {
@@ -92,11 +79,7 @@
             dynamicData.push(groupData);
           });
 
-          // Send collected data
-          const formData = {
-            staticData,
-            dynamicData,
-          };
+          const formData = { staticData, dynamicData };
 
           try {
             const response = await fetch('guardaxml.php?f=' + urlParams.get('f'), {
@@ -107,50 +90,71 @@
 
             const result = await response.text();
             console.log(result);
-            alert('Form submitted successfully!');
+            //alert('Formulario enviado correctamente.');
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+            formContainer.reset();
+
           } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred while submitting the form.');
+            alert('Error al enviar el formulario.');
           }
         });
+
       } catch (error) {
-        console.error('Error loading XML:', error);
+        console.error('Error al cargar el XML:', error);
       }
 
-      // Function to render a single field
+      // Render campo estatico
       function renderField(field, container) {
         const name = field.querySelector('name').textContent;
         const type = field.querySelector('type').textContent;
         const placeholder = field.querySelector('placeholder').textContent;
         const required = field.querySelector('required').textContent === 'true';
 
+        const wrapper = document.createElement('div');
+        wrapper.className = "space-y-1";
+
+        const label = document.createElement('label');
+        label.textContent = name;
+        label.className = "block text-sm font-medium text-gray-700";
+
         const input = document.createElement('input');
         input.type = type;
         input.name = name;
         input.placeholder = placeholder;
         input.required = required;
-        container.appendChild(input);
-        container.appendChild(document.createElement('br'));
+        input.className = "w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200";
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        container.appendChild(wrapper);
       }
 
-      // Function to render dynamic field groups
+      // Render campos dinamicos
       function renderDynamicFieldGroup(fieldGroup, container) {
         const groupName = fieldGroup.getAttribute('name');
         const fields = Array.from(fieldGroup.querySelectorAll('field'));
 
-        const groupContainer = document.createElement('div');
-        groupContainer.classList.add('dynamic-group');
-        container.appendChild(groupContainer);
+        const wrapper = document.createElement('div');
+        wrapper.className = "dynamic-group border border-blue-100 rounded p-4 bg-blue-50";
+        container.appendChild(wrapper);
 
-        const addLineButton = document.createElement('button');
-        addLineButton.type = 'button';
-        addLineButton.textContent = `+ Add ${groupName}`;
-        addLineButton.classList.add('add-line-btn');
-        container.appendChild(addLineButton);
+        const title = document.createElement('h2');
+        title.className = "text-lg font-semibold text-blue-600 mb-2";
+        title.textContent = groupName;
+        wrapper.appendChild(title);
+
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.textContent = `+ Añadir ${groupName}`;
+        addBtn.className = "mb-4 text-sm font-medium text-blue-600 hover:underline";
+        container.appendChild(addBtn);
 
         function renderDynamicLine() {
           const line = document.createElement('div');
-          line.classList.add('dynamic-line');
+          line.className = "dynamic-line flex flex-wrap gap-3 mb-3";
 
           fields.forEach(field => {
             const name = field.querySelector('name').textContent;
@@ -163,23 +167,22 @@
             input.name = `${groupName}[${name}][]`;
             input.placeholder = placeholder;
             input.required = required;
+            input.className = "flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-200";
             line.appendChild(input);
           });
 
-          const removeButton = document.createElement('button');
-          removeButton.type = 'button';
-          removeButton.textContent = '-';
-          removeButton.classList.add('remove-line-btn');
-          removeButton.addEventListener('click', () => {
-            groupContainer.removeChild(line);
-          });
-          line.appendChild(removeButton);
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.textContent = '✕';
+          removeBtn.className = "text-sm text-red-500 hover:text-red-700 font-bold";
+          removeBtn.onclick = () => wrapper.removeChild(line);
+          line.appendChild(removeBtn);
 
-          groupContainer.appendChild(line);
+          wrapper.appendChild(line);
         }
 
-        addLineButton.addEventListener('click', renderDynamicLine);
-        renderDynamicLine(); // Render initial line
+        addBtn.onclick = renderDynamicLine;
+        renderDynamicLine();
       }
     });
   </script>

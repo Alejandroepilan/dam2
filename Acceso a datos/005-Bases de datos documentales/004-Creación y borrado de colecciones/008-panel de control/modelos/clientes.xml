@@ -2,9 +2,9 @@
 <form>
     <fields>
         <field>
-            <name>customerName</name>
+            <name>Nombre</name>
             <type>text</type>
-            <placeholder>Customer Name</placeholder>
+            <placeholder>Nombre del cliente</placeholder>
             <required>true</required>
         </field>
         <field>
