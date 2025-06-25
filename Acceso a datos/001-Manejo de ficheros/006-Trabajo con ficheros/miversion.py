@@ -10,7 +10,7 @@ class Npc:
 npcs = []
 
 try:
-  with open('basededatos.json', 'r') as archivo:
+  with open('C:\\Users\\Alejandro\\Desktop\\dam2\\Acceso a datos\\001-Manejo de ficheros\\006-Trabajo con ficheros\\basededatos.json', 'r') as archivo:
     datos = json.load(archivo)
 except FileNotFoundError:
   print("No se ha encontrado el archivo.")

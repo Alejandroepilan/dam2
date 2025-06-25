@@ -13,7 +13,7 @@ npcs = []
 # Intentamos abrir el archivo de texto que contiene los datos serializados
 # Si no existe, creamos una variable contenido vacia para que no falle el programa
 try:
-  archivo = open("basededatos.txt",'r')
+  archivo = open("C:\\Users\\Alejandro\\Desktop\\dam2\\Acceso a datos\\001-Manejo de ficheros\\005-Serializacióndeserialización de objetos\\basededatos.txt",'r')
   contenido = archivo.read()
   #print(contenido)
 except:

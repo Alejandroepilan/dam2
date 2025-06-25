@@ -24,7 +24,7 @@ class Producto:
     self.peso = None
     self.dimensiones = {"x":None,"y":None,"z":None}
 
-carpeta = "basededatos"
+carpeta = "C:\\Users\\Alejandro\\Desktop\\dam2\\Acceso a datos\\001-Manejo de ficheros\\007-Excepciones detección y tratamiento\\basededatos"
 continuas = True
 clientes = []
 

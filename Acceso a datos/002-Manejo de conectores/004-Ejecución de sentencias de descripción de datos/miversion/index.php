@@ -10,7 +10,7 @@ $conexion = new conexionDB();
 $json = $conexion->seleccionaTabla("lineaspedido");
 $datos = json_decode($json, true);
 
-echo $json;
+//echo $json;
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ echo $json;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Visor tablas MySQL</title>
+  <title>Visor tablas SQL</title>
 </head>
 
 <body class="bg-gray-100 p-6">

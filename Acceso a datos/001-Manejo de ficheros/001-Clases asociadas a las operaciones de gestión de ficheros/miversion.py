@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageOps
 from tqdm import tqdm
 
-carpeta = "fotos"
+carpeta = "C:\\Users\\Alejandro\\Desktop\\dam2\\Acceso a datos\\001-Manejo de ficheros\\001-Clases asociadas a las operaciones de gestión de ficheros\\fotos"
 formatos_validos = (".jpg", ".jpeg", ".png")
 
 archivos = os.listdir(carpeta)
