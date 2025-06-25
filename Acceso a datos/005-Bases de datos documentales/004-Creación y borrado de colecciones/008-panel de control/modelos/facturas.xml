@@ -2,9 +2,9 @@
 <form>
     <fields>
         <field>
-            <name>customerName</name>
+            <name>Nombre</name>
             <type>text</type>
-            <placeholder>Customer Name</placeholder>
+            <placeholder>Nombre del cliente</placeholder>
             <required>true</required>
         </field>
     </fields>
@@ -13,19 +13,19 @@
             <field>
                 <name>description</name>
                 <type>text</type>
-                <placeholder>Description</placeholder>
+                <placeholder>Descripción</placeholder>
                 <required>true</required>
             </field>
             <field>
                 <name>quantity</name>
                 <type>number</type>
-                <placeholder>Quantity</placeholder>
+                <placeholder>Cantidad</placeholder>
                 <required>true</required>
             </field>
             <field>
                 <name>price</name>
                 <type>number</type>
-                <placeholder>Price</placeholder>
+                <placeholder>Precio</placeholder>
                 <required>true</required>
             </field>
         </fieldGroup>
